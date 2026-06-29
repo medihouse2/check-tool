@@ -1292,7 +1292,7 @@
   }
 
   function saveResultToGoogleSheet(payload) {
-    if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('여기에_Apps_Script')) {
+    if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('https://script.google.com/macros/s/AKfycbx7dqLKG9P0qJXjkkVMxCndm6zbdO-5NJVTuXzt55SqPLsBG_b2Nw3t-C2jtAgAkahNzA/exec')) {
       console.warn('Apps Script URL이 아직 입력되지 않았습니다. GOOGLE_SCRIPT_URL을 /exec 주소로 교체해 주세요.');
       alert('Apps Script URL이 아직 입력되지 않았습니다. HTML 파일의 GOOGLE_SCRIPT_URL을 /exec 주소로 교체해 주세요.');
       return;
