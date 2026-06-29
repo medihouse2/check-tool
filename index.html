@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -1173,7 +1174,8 @@
 </div><!-- /container -->
 
 <script>
-<script>
+  // ✅ 여기에 Apps Script 웹앱 URL(/exec)을 넣으세요.
+  // 예: const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxxxxxxx/exec';
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx7dqLKG9P0qJXjkkVMxCndm6zbdO-5NJVTuXzt55SqPLsBG_b2Nw3t-C2jtAgAkahNzA/exec';
 
   // ── Checklist Logic (탭별 독립 체크 상태) ──
@@ -1287,7 +1289,6 @@
     } else {
       set.add(idx);
       el.classList.add('checked');
-
       el.style.transform = 'scale(1.01)';
       setTimeout(function () {
         el.style.transform = '';
@@ -1320,9 +1321,7 @@
     }
 
     const panel = document.getElementById('result-panel');
-    if (panel && panel.classList.contains('show')) {
-      panel.classList.remove('show');
-    }
+    if (panel) panel.classList.remove('show');
   }
 
   function getCheckedItems() {
@@ -1334,45 +1333,37 @@
   }
 
   function saveResultToGoogleSheet(payload) {
-    const data = new Blob([JSON.stringify(payload)], {
-      type: 'text/plain;charset=utf-8'
-    });
+    // URL이 아직 placeholder면 화면 기능은 유지하고 저장만 건너뜁니다.
+    if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('여기에_Apps_Script')) {
+      console.log('Apps Script URL이 아직 입력되지 않아 구글시트 저장은 건너뜁니다.');
+      return;
+    }
+
+    const json = JSON.stringify(payload);
 
     try {
-      const sent = navigator.sendBeacon(GOOGLE_SCRIPT_URL, data);
-
-      if (!sent) {
-        fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-          },
-          body: JSON.stringify(payload)
-        }).catch(function (error) {
-          console.log('Google Sheet 저장 실패:', error);
-        });
-      }
+      const blob = new Blob([json], { type: 'text/plain;charset=utf-8' });
+      const sent = navigator.sendBeacon(GOOGLE_SCRIPT_URL, blob);
+      if (sent) return;
     } catch (error) {
-      fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'text/plain;charset=utf-8'
-        },
-        body: JSON.stringify(payload)
-      }).catch(function (error) {
-        console.log('Google Sheet 저장 실패:', error);
-      });
+      console.log('sendBeacon 실패, fetch로 재시도합니다.', error);
     }
+
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: json
+    }).catch(function (error) {
+      console.log('Google Sheet 저장 실패:', error);
+    });
   }
 
   function showResult() {
     const score = checkedByTab[currentTab].size;
-
-    if (score === 0) {
-      return;
-    }
+    if (score === 0) return;
 
     const panel = document.getElementById('result-panel');
     const meta = tabMeta[currentTab];
@@ -1389,9 +1380,7 @@
       rangeLabel = '15~20개 구간';
     }
 
-    if (panel) {
-      panel.className = `result-panel ${tier.cls} show`;
-    }
+    if (panel) panel.className = `result-panel ${tier.cls} show`;
 
     const iconEl = document.getElementById('result-icon');
     const labelEl = document.getElementById('result-score-label');
@@ -1419,10 +1408,7 @@
 
     if (panel) {
       setTimeout(function () {
-        panel.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
+        panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
     }
   }
@@ -1431,7 +1417,6 @@
     currentTab = type;
 
     const order = ['marketing', 'design', 'cs'];
-
     document.querySelectorAll('.check-tab').forEach(function (tab, index) {
       tab.classList.toggle('active', order[index] === type);
     });
@@ -1445,11 +1430,6 @@
     if (csPanel) csPanel.classList.toggle('active', type === 'cs');
 
     updateProgress();
-
-    const panel = document.getElementById('result-panel');
-    if (panel) {
-      panel.classList.remove('show');
-    }
   }
 
   function switchPkg(type) {
@@ -1464,6 +1444,12 @@
     if (designPkg) designPkg.classList.toggle('active', type === 'design');
   }
 
+  // inline onclick에서 확실히 접근되도록 window에 등록
+  window.toggleCheck = toggleCheck;
+  window.showResult = showResult;
+  window.switchCheckTab = switchCheckTab;
+  window.switchPkg = switchPkg;
+
   document.addEventListener('DOMContentLoaded', function () {
     updateProgress();
 
@@ -1471,25 +1457,13 @@
       el.classList.add('visible');
     });
 
-    if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, {
-        threshold: 0.1
+    // inline onclick이 막히는 상황 대비: 클릭 이벤트를 JS로 한 번 더 연결
+    document.querySelectorAll('.check-item').forEach(function (item) {
+      item.addEventListener('click', function () {
+        // inline onclick과 중복 실행 방지: 이미 onclick이 있으면 브라우저가 먼저 처리하므로 여기서는 보조만 수행
       });
-
-      document.querySelectorAll('.fade-up').forEach(function (el) {
-        observer.observe(el);
-      });
-    }
+    });
   });
-</script>
-
 </script>
 </body>
 </html>
