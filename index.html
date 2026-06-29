@@ -1173,15 +1173,16 @@
 </div><!-- /container -->
 
 <script>
-  // Apps Script 웹앱 URL을 /exec 주소로 교체하세요.
+<script>
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx7dqLKG9P0qJXjkkVMxCndm6zbdO-5NJVTuXzt55SqPLsBG_b2Nw3t-C2jtAgAkahNzA/exec';
 
   // ── Checklist Logic (탭별 독립 체크 상태) ──
   let currentTab = 'marketing';
+
   const checkedByTab = {
     marketing: new Set(),
     design: new Set(),
-    cs: new Set(),
+    cs: new Set()
   };
 
   const tabMeta = {
@@ -1189,98 +1190,137 @@
       label: '마케팅',
       results: [
         {
-          max: 7, cls: 'red', icon: '🚨', title: '점검 필요',
+          max: 7,
+          cls: 'red',
+          icon: '🚨',
+          title: '점검 필요',
           desc: '온라인 유입 구조의 기초가 아직 갖춰지지 않은 상태입니다. 광고를 시작하기 전에 검색·플레이스·홈페이지·블로그의 기본 채널부터 정리하는 것이 먼저입니다.',
-          recommend: '<strong>📌 추천 콘텐츠</strong>"광고비 쓰기 전 병원이 먼저 점검해야 할 것" — 메디하우스 NEXT에서 확인하세요.',
+          recommend: '<strong>📌 추천 콘텐츠</strong>"광고비 쓰기 전 병원이 먼저 점검해야 할 것" — 메디하우스 NEXT에서 확인하세요.'
         },
         {
-          max: 14, cls: 'orange', icon: '⚠️', title: '연결 보완 필요',
+          max: 14,
+          cls: 'orange',
+          icon: '⚠️',
+          title: '연결 보완 필요',
           desc: '채널은 어느 정도 갖춰져 있지만, 환자가 실제 문의로 이어지는 연결 구조가 약한 상태입니다. 각 채널이 서로 잘 연결되도록 흐름을 점검해보세요.',
-          recommend: '<strong>📌 추천 콘텐츠</strong>"환자는 병원을 고를 때 무엇을 먼저 볼까?" — 메디하우스 NEXT에서 확인하세요.',
+          recommend: '<strong>📌 추천 콘텐츠</strong>"환자는 병원을 고를 때 무엇을 먼저 볼까?" — 메디하우스 NEXT에서 확인하세요.'
         },
         {
-          max: 20, cls: 'green', icon: '✅', title: '기본 흐름 양호',
+          max: 20,
+          cls: 'green',
+          icon: '✅',
+          title: '기본 흐름 양호',
           desc: '온라인 유입의 기본 흐름은 잘 갖춰진 상태입니다. 이제는 콘텐츠 고도화와 병원 브랜딩으로 한 단계 더 올라갈 차례입니다.',
-          recommend: '<strong>📌 추천 콘텐츠</strong>"원장이 병원 홍보 기준을 알아야 하는 이유" — 메디하우스 NEXT에서 확인하세요.',
-        },
-      ],
+          recommend: '<strong>📌 추천 콘텐츠</strong>"원장이 병원 홍보 기준을 알아야 하는 이유" — 메디하우스 NEXT에서 확인하세요.'
+        }
+      ]
     },
+
     design: {
       label: '디자인',
       results: [
         {
-          max: 7, cls: 'red', icon: '🚨', title: '점검 필요',
-          desc: '병원의 첫인상을 좌우하는 디자인 요소(홈페이지·안내물·배너 등)가 방치된 상태입니다. 환자가 마주치는 접점부터 정비가 필요합니다.',
-          recommend: '<strong>📌 추천 콘텐츠</strong>"병원 디자인, 어디서부터 손봐야 할까?" — 메디하우스 NEXT에서 확인하세요.',
+          max: 7,
+          cls: 'red',
+          icon: '🚨',
+          title: '점검 필요',
+          desc: '병원의 첫인상을 좌우하는 디자인 요소가 방치된 상태입니다. 홈페이지·안내물·배너 등 환자가 마주치는 접점부터 정비가 필요합니다.',
+          recommend: '<strong>📌 추천 콘텐츠</strong>"병원 디자인, 어디서부터 손봐야 할까?" — 메디하우스 NEXT에서 확인하세요.'
         },
         {
-          max: 14, cls: 'orange', icon: '⚠️', title: '톤앤매너 정리 필요',
+          max: 14,
+          cls: 'orange',
+          icon: '⚠️',
+          title: '톤앤매너 정리 필요',
           desc: '디자인 요소는 갖춰져 있지만 채널마다 톤이 제각각이라 병원의 신뢰감이 분산되고 있는 상태입니다. 통일된 디자인 시스템 정비가 필요합니다.',
-          recommend: '<strong>📌 추천 콘텐츠</strong>"옆 병원과 달라 보이는 디자인의 비밀" — 메디하우스 NEXT에서 확인하세요.',
+          recommend: '<strong>📌 추천 콘텐츠</strong>"옆 병원과 달라 보이는 디자인의 비밀" — 메디하우스 NEXT에서 확인하세요.'
         },
         {
-          max: 20, cls: 'green', icon: '✅', title: '비주얼 아이덴티티 양호',
+          max: 20,
+          cls: 'green',
+          icon: '✅',
+          title: '비주얼 아이덴티티 양호',
           desc: '병원의 비주얼 아이덴티티가 전반적으로 잘 정리된 상태입니다. 이제는 브랜드 톤을 강화하고 디테일을 다듬을 차례입니다.',
-          recommend: '<strong>📌 추천 콘텐츠</strong>"좋은 병원 디자인이 환자 신뢰로 이어지는 이유" — 메디하우스 NEXT에서 확인하세요.',
-        },
-      ],
+          recommend: '<strong>📌 추천 콘텐츠</strong>"좋은 병원 디자인이 환자 신뢰로 이어지는 이유" — 메디하우스 NEXT에서 확인하세요.'
+        }
+      ]
     },
+
     cs: {
       label: 'CS',
       results: [
         {
-          max: 7, cls: 'red', icon: '🚨', title: '점검 필요',
+          max: 7,
+          cls: 'red',
+          icon: '🚨',
+          title: '점검 필요',
           desc: '응대 기준과 매뉴얼이 아직 갖춰지지 않아 직원 개인 역량에 의존하고 있는 상태입니다. 전화·내원·클레임 대응의 기본 기준부터 정리가 필요합니다.',
-          recommend: '<strong>📌 추천 콘텐츠</strong>"병원 CS, 매뉴얼 없이는 안 되는 이유" — 메디하우스 NEXT에서 확인하세요.',
+          recommend: '<strong>📌 추천 콘텐츠</strong>"병원 CS, 매뉴얼 없이는 안 되는 이유" — 메디하우스 NEXT에서 확인하세요.'
         },
         {
-          max: 14, cls: 'orange', icon: '⚠️', title: '표준화 보완 필요',
+          max: 14,
+          cls: 'orange',
+          icon: '⚠️',
+          title: '표준화 보완 필요',
           desc: '기본 응대는 이루어지고 있지만, 직원마다 기준이 달라 일관된 환자 경험으로 이어지지 못하는 상태입니다. 표준 매뉴얼화가 필요합니다.',
-          recommend: '<strong>📌 추천 콘텐츠</strong>"재방문율을 높이는 병원 CS의 작은 차이" — 메디하우스 NEXT에서 확인하세요.',
+          recommend: '<strong>📌 추천 콘텐츠</strong>"재방문율을 높이는 병원 CS의 작은 차이" — 메디하우스 NEXT에서 확인하세요.'
         },
         {
-          max: 20, cls: 'green', icon: '✅', title: 'CS 체계 양호',
+          max: 20,
+          cls: 'green',
+          icon: '✅',
+          title: 'CS 체계 양호',
           desc: '응대 기준과 절차가 전반적으로 잘 잡혀 있는 상태입니다. 이제는 데이터 기반으로 재방문율과 환자 만족도를 끌어올릴 차례입니다.',
-          recommend: '<strong>📌 추천 콘텐츠</strong>"좋은 CS가 매출로 연결되는 구조" — 메디하우스 NEXT에서 확인하세요.',
-        },
-      ],
-    },
+          recommend: '<strong>📌 추천 콘텐츠</strong>"좋은 CS가 매출로 연결되는 구조" — 메디하우스 NEXT에서 확인하세요.'
+        }
+      ]
+    }
   };
 
   function toggleCheck(el) {
     const idx = el.dataset.idx;
     const set = checkedByTab[currentTab];
+
     if (set.has(idx)) {
       set.delete(idx);
       el.classList.remove('checked');
     } else {
       set.add(idx);
       el.classList.add('checked');
-      // micro bounce
+
       el.style.transform = 'scale(1.01)';
-      setTimeout(() => el.style.transform = '', 150);
+      setTimeout(function () {
+        el.style.transform = '';
+      }, 150);
     }
+
     updateProgress();
   }
 
   function updateProgress() {
     const count = checkedByTab[currentTab].size;
-    document.getElementById('checked-count').textContent = count;
-    document.getElementById('checked-total').textContent = 20;
-    document.getElementById('progress-fill').style.width = (count / 20 * 100) + '%';
 
+    const countEl = document.getElementById('checked-count');
+    const totalEl = document.getElementById('checked-total');
+    const fillEl = document.getElementById('progress-fill');
     const btn = document.getElementById('result-btn');
-    if (count > 0) {
-      btn.disabled = false;
-      btn.textContent = `결과 확인하기 (${count}개 선택) →`;
-    } else {
-      btn.disabled = true;
-      btn.textContent = '결과 확인하기 →';
+
+    if (countEl) countEl.textContent = count;
+    if (totalEl) totalEl.textContent = 20;
+    if (fillEl) fillEl.style.width = (count / 20 * 100) + '%';
+
+    if (btn) {
+      if (count > 0) {
+        btn.disabled = false;
+        btn.textContent = `결과 확인하기 (${count}개 선택) →`;
+      } else {
+        btn.disabled = true;
+        btn.textContent = '결과 확인하기 →';
+      }
     }
 
-    // hide result if re-editing
     const panel = document.getElementById('result-panel');
-    if (panel.classList.contains('show')) {
+    if (panel && panel.classList.contains('show')) {
       panel.classList.remove('show');
     }
   }
@@ -1288,67 +1328,82 @@
   function getCheckedItems() {
     return Array.from(
       document.querySelectorAll(`#check-${currentTab} .check-item.checked .check-label`)
-    ).map(el => el.textContent.trim());
+    ).map(function (el) {
+      return el.textContent.trim();
+    });
   }
 
   function saveResultToGoogleSheet(payload) {
-    if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('https://script.google.com/macros/s/AKfycbx7dqLKG9P0qJXjkkVMxCndm6zbdO-5NJVTuXzt55SqPLsBG_b2Nw3t-C2jtAgAkahNzA/exec')) {
-      console.warn('Apps Script URL이 아직 입력되지 않았습니다. GOOGLE_SCRIPT_URL을 /exec 주소로 교체해 주세요.');
-      alert('Apps Script URL이 아직 입력되지 않았습니다. HTML 파일의 GOOGLE_SCRIPT_URL을 /exec 주소로 교체해 주세요.');
-      return;
-    }
-
-    const json = JSON.stringify(payload);
+    const data = new Blob([JSON.stringify(payload)], {
+      type: 'text/plain;charset=utf-8'
+    });
 
     try {
-      // 1순위: sendBeacon 사용. 페이지 이동/스크롤과 관계없이 백그라운드 전송에 안정적입니다.
-      if (navigator.sendBeacon) {
-        const blob = new Blob([json], { type: 'text/plain;charset=utf-8' });
-        const ok = navigator.sendBeacon(GOOGLE_SCRIPT_URL, blob);
-        if (ok) {
-          console.log('Google Sheet 저장 요청 전송 완료(sendBeacon)');
-          return;
-        }
-      }
+      const sent = navigator.sendBeacon(GOOGLE_SCRIPT_URL, data);
 
-      // 2순위: fetch no-cors fallback
+      if (!sent) {
+        fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(payload)
+        }).catch(function (error) {
+          console.log('Google Sheet 저장 실패:', error);
+        });
+      }
+    } catch (error) {
       fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: {
           'Content-Type': 'text/plain;charset=utf-8'
         },
-        body: json,
-        keepalive: true
-      }).then(function() {
-        console.log('Google Sheet 저장 요청 전송 완료(fetch)');
-      }).catch(function(error) {
+        body: JSON.stringify(payload)
+      }).catch(function (error) {
         console.log('Google Sheet 저장 실패:', error);
       });
-    } catch (error) {
-      console.log('Google Sheet 저장 중 오류:', error);
     }
   }
 
   function showResult() {
     const score = checkedByTab[currentTab].size;
-    if (score === 0) return;
+
+    if (score === 0) {
+      return;
+    }
 
     const panel = document.getElementById('result-panel');
     const meta = tabMeta[currentTab];
-    const tier = meta.results.find(r => score <= r.max);
+    const tier = meta.results.find(function (r) {
+      return score <= r.max;
+    });
 
-    let rangeLabel;
-    if (score <= 7) rangeLabel = '0~7개 구간';
-    else if (score <= 14) rangeLabel = '8~14개 구간';
-    else rangeLabel = '15~20개 구간';
+    let rangeLabel = '';
+    if (score <= 7) {
+      rangeLabel = '0~7개 구간';
+    } else if (score <= 14) {
+      rangeLabel = '8~14개 구간';
+    } else {
+      rangeLabel = '15~20개 구간';
+    }
 
-    panel.className = `result-panel ${tier.cls} show`;
-    document.getElementById('result-icon').textContent = tier.icon;
-    document.getElementById('result-score-label').textContent = `[${meta.label}] ${score}개 체크 — ${rangeLabel}`;
-    document.getElementById('result-title').textContent = tier.title;
-    document.getElementById('result-desc').textContent = tier.desc;
-    document.getElementById('result-recommend').innerHTML = tier.recommend;
+    if (panel) {
+      panel.className = `result-panel ${tier.cls} show`;
+    }
+
+    const iconEl = document.getElementById('result-icon');
+    const labelEl = document.getElementById('result-score-label');
+    const titleEl = document.getElementById('result-title');
+    const descEl = document.getElementById('result-desc');
+    const recommendEl = document.getElementById('result-recommend');
+
+    if (iconEl) iconEl.textContent = tier.icon;
+    if (labelEl) labelEl.textContent = `[${meta.label}] ${score}개 체크 — ${rangeLabel}`;
+    if (titleEl) titleEl.textContent = tier.title;
+    if (descEl) descEl.textContent = tier.desc;
+    if (recommendEl) recommendEl.innerHTML = tier.recommend;
 
     const payload = {
       category: meta.label,
@@ -1362,56 +1417,79 @@
 
     saveResultToGoogleSheet(payload);
 
-    setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+    if (panel) {
+      setTimeout(function () {
+        panel.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }, 100);
+    }
   }
 
-  // ── Checklist Tab Switch ──
   function switchCheckTab(type) {
     currentTab = type;
-    document.querySelectorAll('.check-tab').forEach((t, i) => {
-      const order = ['marketing', 'design', 'cs'];
-      t.classList.toggle('active', order[i] === type);
+
+    const order = ['marketing', 'design', 'cs'];
+
+    document.querySelectorAll('.check-tab').forEach(function (tab, index) {
+      tab.classList.toggle('active', order[index] === type);
     });
-    document.getElementById('check-marketing').classList.toggle('active', type === 'marketing');
-    document.getElementById('check-design').classList.toggle('active', type === 'design');
-    document.getElementById('check-cs').classList.toggle('active', type === 'cs');
+
+    const marketingPanel = document.getElementById('check-marketing');
+    const designPanel = document.getElementById('check-design');
+    const csPanel = document.getElementById('check-cs');
+
+    if (marketingPanel) marketingPanel.classList.toggle('active', type === 'marketing');
+    if (designPanel) designPanel.classList.toggle('active', type === 'design');
+    if (csPanel) csPanel.classList.toggle('active', type === 'cs');
 
     updateProgress();
 
     const panel = document.getElementById('result-panel');
-    panel.classList.remove('show');
+    if (panel) {
+      panel.classList.remove('show');
+    }
   }
 
-
-  // ── Package Tab Switch ──
   function switchPkg(type) {
-    document.querySelectorAll('.pkg-tab').forEach((t, i) => {
-      t.classList.toggle('active', (i === 0 && type === 'marketing') || (i === 1 && type === 'design'));
+    document.querySelectorAll('.pkg-tab').forEach(function (tab, index) {
+      tab.classList.toggle('active', (index === 0 && type === 'marketing') || (index === 1 && type === 'design'));
     });
-    document.getElementById('pkg-marketing').classList.toggle('active', type === 'marketing');
-    document.getElementById('pkg-design').classList.toggle('active', type === 'design');
+
+    const marketingPkg = document.getElementById('pkg-marketing');
+    const designPkg = document.getElementById('pkg-design');
+
+    if (marketingPkg) marketingPkg.classList.toggle('active', type === 'marketing');
+    if (designPkg) designPkg.classList.toggle('active', type === 'design');
   }
 
-  // ── Scroll Fade In 안전 처리 ──
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     updateProgress();
 
-    const fadeItems = document.querySelectorAll('.fade-up');
-    fadeItems.forEach(el => el.classList.add('visible'));
+    document.querySelectorAll('.fade-up').forEach(function (el) {
+      el.classList.add('visible');
+    });
 
     if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((e, i) => {
-          if (e.isIntersecting) {
-            setTimeout(() => e.target.classList.add('visible'), i * 80);
-            observer.unobserve(e.target);
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.1 });
+      }, {
+        threshold: 0.1
+      });
 
-      fadeItems.forEach(el => observer.observe(el));
+      document.querySelectorAll('.fade-up').forEach(function (el) {
+        observer.observe(el);
+      });
     }
   });
+</script>
+
 </script>
 </body>
 </html>
