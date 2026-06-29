@@ -1176,7 +1176,7 @@
 <script>
   // ✅ 여기에 Apps Script 웹앱 URL(/exec)을 넣으세요.
   // 예: const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxxxxxxx/exec';
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx7dqLKG9P0qJXjkkVMxCndm6zbdO-5NJVTuXzt55SqPLsBG_b2Nw3t-C2jtAgAkahNzA/exec';
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyDbRLttz0sPVjoqqhFqwvcKbR3DoHzrtP0SVZx86NI-b_v33jE9DiSqTjGuQydxp5Yhw/exec';
 
   // ── Checklist Logic (탭별 독립 체크 상태) ──
   let currentTab = 'marketing';
@@ -1333,37 +1333,24 @@
   }
 
 function saveResultToGoogleSheet(payload) {
-const iframeName = 'google-sheet-submit-frame';
+const params = new URLSearchParams();
 
-let iframe = document.getElementById(iframeName);
-if (!iframe) {
-iframe = document.createElement('iframe');
-iframe.name = iframeName;
-iframe.id = iframeName;
-iframe.style.display = 'none';
-document.body.appendChild(iframe);
+params.append('mode', 'save');
+params.append('category', payload.category || '');
+params.append('score', payload.score || '');
+params.append('rangeLabel', payload.rangeLabel || '');
+params.append('resultTitle', payload.resultTitle || '');
+params.append('checkedItems', Array.isArray(payload.checkedItems) ? payload.checkedItems.join(' / ') : '');
+params.append('pageUrl', payload.pageUrl || window.location.href);
+params.append('userAgent', payload.userAgent || navigator.userAgent);
+params.append('t', Date.now());
+
+const url = GOOGLE_SCRIPT_URL + '?' + params.toString();
+
+const img = new Image();
+img.src = url;
 }
 
-const form = document.createElement('form');
-form.method = 'POST';
-form.action = GOOGLE_SCRIPT_URL;
-form.target = iframeName;
-form.style.display = 'none';
-
-const input = document.createElement('input');
-input.type = 'hidden';
-input.name = 'data';
-input.value = JSON.stringify(payload);
-
-form.appendChild(input);
-document.body.appendChild(form);
-
-form.submit();
-
-setTimeout(function () {
-form.remove();
-}, 1000);
-}
 
 
   function showResult() {
