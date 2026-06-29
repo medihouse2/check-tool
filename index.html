@@ -1176,7 +1176,7 @@
 <script>
   // ✅ 여기에 Apps Script 웹앱 URL(/exec)을 넣으세요.
   // 예: const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxxxxxxx/exec';
-  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyDbRLttz0sPVjoqqhFqwvcKbR3DoHzrtP0SVZx86NI-b_v33jE9DiSqTjGuQydxp5Yhw/exec';
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx7VtbfEahfZSYPKvhKKSdi3Wv4nL6EifvfJDyJYFWwZJ-qS0TUgQH2w8UX7S85gYs8cw/exec';
 
   // ── Checklist Logic (탭별 독립 체크 상태) ──
   let currentTab = 'marketing';
@@ -1332,78 +1332,85 @@
     });
   }
 
-function saveResultToGoogleSheet(payload) {
+ function saveResultToGoogleSheet(payload) {
 const params = new URLSearchParams();
 
-params.append('mode', 'save');
 params.append('category', payload.category || '');
 params.append('score', payload.score || '');
 params.append('rangeLabel', payload.rangeLabel || '');
 params.append('resultTitle', payload.resultTitle || '');
-params.append('checkedItems', Array.isArray(payload.checkedItems) ? payload.checkedItems.join(' / ') : '');
+params.append(
+'checkedItems',
+Array.isArray(payload.checkedItems) ? payload.checkedItems.join(' / ') : ''
+);
 params.append('pageUrl', payload.pageUrl || window.location.href);
 params.append('userAgent', payload.userAgent || navigator.userAgent);
 params.append('t', Date.now());
 
-const url = GOOGLE_SCRIPT_URL + '?' + params.toString();
+const submitUrl = GOOGLE_SCRIPT_URL + '?' + params.toString();
 
-const img = new Image();
-img.src = url;
+const iframe = document.createElement('iframe');
+iframe.style.display = 'none';
+iframe.src = submitUrl;
+
+document.body.appendChild(iframe);
+
+setTimeout(function () {
+iframe.remove();
+}, 3000);
 }
 
+function showResult() {
+const score = checkedByTab[currentTab].size;
 
+if (score === 0) {
+return;
+}
 
-  function showResult() {
-    const score = checkedByTab[currentTab].size;
-    if (score === 0) return;
+const panel = document.getElementById('result-panel');
+const meta = tabMeta[currentTab];
 
-    const panel = document.getElementById('result-panel');
-    const meta = tabMeta[currentTab];
-    const tier = meta.results.find(function (r) {
-      return score <= r.max;
-    });
+const tier = meta.results.find(function (r) {
+return score <= r.max;
+});
 
-    let rangeLabel = '';
-    if (score <= 7) {
-      rangeLabel = '0~7개 구간';
-    } else if (score <= 14) {
-      rangeLabel = '8~14개 구간';
-    } else {
-      rangeLabel = '15~20개 구간';
-    }
+let rangeLabel = '';
 
-    if (panel) panel.className = `result-panel ${tier.cls} show`;
+if (score <= 7) {
+rangeLabel = '0~7개 구간';
+} else if (score <= 14) {
+rangeLabel = '8~14개 구간';
+} else {
+rangeLabel = '15~20개 구간';
+}
 
-    const iconEl = document.getElementById('result-icon');
-    const labelEl = document.getElementById('result-score-label');
-    const titleEl = document.getElementById('result-title');
-    const descEl = document.getElementById('result-desc');
-    const recommendEl = document.getElementById('result-recommend');
+panel.className = `result-panel ${tier.cls} show`;
+document.getElementById('result-icon').textContent = tier.icon;
+document.getElementById('result-score-label').textContent = `[${meta.label}] ${score}개 체크 — ${rangeLabel}`;
+document.getElementById('result-title').textContent = tier.title;
+document.getElementById('result-desc').textContent = tier.desc;
+document.getElementById('result-recommend').innerHTML = tier.recommend;
 
-    if (iconEl) iconEl.textContent = tier.icon;
-    if (labelEl) labelEl.textContent = `[${meta.label}] ${score}개 체크 — ${rangeLabel}`;
-    if (titleEl) titleEl.textContent = tier.title;
-    if (descEl) descEl.textContent = tier.desc;
-    if (recommendEl) recommendEl.innerHTML = tier.recommend;
+const payload = {
+category: meta.label,
+score: score,
+rangeLabel: rangeLabel,
+resultTitle: tier.title,
+checkedItems: getCheckedItems(),
+pageUrl: window.location.href,
+userAgent: navigator.userAgent
+};
 
-    const payload = {
-      category: meta.label,
-      score: score,
-      rangeLabel: rangeLabel,
-      resultTitle: tier.title,
-      checkedItems: getCheckedItems(),
-      pageUrl: window.location.href,
-      userAgent: navigator.userAgent
-    };
+saveResultToGoogleSheet(payload);
 
-    saveResultToGoogleSheet(payload);
+setTimeout(function () {
+panel.scrollIntoView({
+behavior: 'smooth',
+block: 'center'
+});
+}, 100);
+}
 
-    if (panel) {
-      setTimeout(function () {
-        panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
-    }
-  }
 
   function switchCheckTab(type) {
     currentTab = type;
