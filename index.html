@@ -644,8 +644,8 @@
 
   /* ── ANIMATIONS ── */
   .fade-up {
-    opacity: 0;
-    transform: translateY(20px);
+    opacity: 1;
+    transform: translateY(0);
     transition: opacity 0.5s ease, transform 0.5s ease;
   }
   .fade-up.visible {
@@ -1293,31 +1293,37 @@
 
   function saveResultToGoogleSheet(payload) {
     if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('여기에_Apps_Script')) {
-      console.warn('Apps Script 웹앱 URL이 아직 입력되지 않았습니다. GOOGLE_SCRIPT_URL을 /exec 주소로 교체하세요.');
+      console.warn('Apps Script URL이 아직 입력되지 않았습니다. GOOGLE_SCRIPT_URL을 /exec 주소로 교체해 주세요.');
       return;
     }
 
-    fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8'
-      },
-      body: JSON.stringify(payload)
-    }).catch(function(error) {
-      console.log('Google Sheet 저장 실패:', error);
-    });
+    try {
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify(payload)
+      }).catch(function(error) {
+        console.log('Google Sheet 저장 실패:', error);
+      });
+    } catch (error) {
+      console.log('Google Sheet 저장 중 오류:', error);
+    }
   }
 
   function showResult() {
     const score = checkedByTab[currentTab].size;
+    if (score === 0) return;
+
     const panel = document.getElementById('result-panel');
     const meta = tabMeta[currentTab];
-
     const tier = meta.results.find(r => score <= r.max);
+
     let rangeLabel;
-    if (tier.max === 7) rangeLabel = '0~7개 구간';
-    else if (tier.max === 14) rangeLabel = '8~14개 구간';
+    if (score <= 7) rangeLabel = '0~7개 구간';
+    else if (score <= 14) rangeLabel = '8~14개 구간';
     else rangeLabel = '15~20개 구간';
 
     panel.className = `result-panel ${tier.cls} show`;
@@ -1369,35 +1375,25 @@
     document.getElementById('pkg-design').classList.toggle('active', type === 'design');
   }
 
-  // ── Scroll Fade In ──
-  function initFadeUp() {
-    const fadeItems = document.querySelectorAll('.fade-up');
-
-    if (!('IntersectionObserver' in window)) {
-      fadeItems.forEach(el => el.classList.add('visible'));
-      return;
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((e, i) => {
-        if (e.isIntersecting) {
-          setTimeout(() => e.target.classList.add('visible'), i * 80);
-          observer.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.1 });
-
-    fadeItems.forEach(el => observer.observe(el));
-
-    // 일부 모바일 브라우저에서 observer가 늦게 동작하는 경우를 대비한 안전장치
-    setTimeout(() => {
-      fadeItems.forEach(el => el.classList.add('visible'));
-    }, 1200);
-  }
-
+  // ── Scroll Fade In 안전 처리 ──
   document.addEventListener('DOMContentLoaded', function() {
     updateProgress();
-    initFadeUp();
+
+    const fadeItems = document.querySelectorAll('.fade-up');
+    fadeItems.forEach(el => el.classList.add('visible'));
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((e, i) => {
+          if (e.isIntersecting) {
+            setTimeout(() => e.target.classList.add('visible'), i * 80);
+            observer.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      fadeItems.forEach(el => observer.observe(el));
+    }
   });
 </script>
 </body>
