@@ -1333,15 +1333,38 @@
   }
 
 function saveResultToGoogleSheet(payload) {
-  const url = GOOGLE_SCRIPT_URL
-    + '?mode=save&data='
-    + encodeURIComponent(JSON.stringify(payload))
-    + '&t='
-    + Date.now();
+const iframeName = 'google-sheet-submit-frame';
 
-  const img = new Image();
-  img.src = url;
+let iframe = document.getElementById(iframeName);
+if (!iframe) {
+iframe = document.createElement('iframe');
+iframe.name = iframeName;
+iframe.id = iframeName;
+iframe.style.display = 'none';
+document.body.appendChild(iframe);
 }
+
+const form = document.createElement('form');
+form.method = 'POST';
+form.action = GOOGLE_SCRIPT_URL;
+form.target = iframeName;
+form.style.display = 'none';
+
+const input = document.createElement('input');
+input.type = 'hidden';
+input.name = 'data';
+input.value = JSON.stringify(payload);
+
+form.appendChild(input);
+document.body.appendChild(form);
+
+form.submit();
+
+setTimeout(function () {
+form.remove();
+}, 1000);
+}
+
 
   function showResult() {
     const score = checkedByTab[currentTab].size;
