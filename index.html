@@ -1173,6 +1173,11 @@
 </div><!-- /container -->
 
 <script>
+ <script>
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/a/macros/medihouse.kr/s/AKfycbxEqwHx45l_kdsFyAsA1j9nJH7RjYHEhhl4OB3W6d0rzxLZk_BwqrIIpx4vLL8Ysj8w/exec';
+
+  // ── Checklist Logic (탭별 독립 체크 상태) ──
+  let currentTab = 'marketing';
   // ── Checklist Logic (탭별 독립 체크 상태) ──
   let currentTab = 'marketing';
   const checkedByTab = {
@@ -1299,7 +1304,28 @@
     document.getElementById('result-title').textContent = tier.title;
     document.getElementById('result-desc').textContent = tier.desc;
     document.getElementById('result-recommend').innerHTML = tier.recommend;
+    const checkedItems = Array.from(
+      document.querySelectorAll(`#check-${currentTab} .check-item.checked .check-label`)
+    ).map(el => el.textContent.trim());
 
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify({
+        category: meta.label,
+        score: score,
+        rangeLabel: rangeLabel,
+        resultTitle: tier.title,
+        checkedItems: checkedItems,
+        pageUrl: window.location.href,
+        userAgent: navigator.userAgent
+      })
+    }).catch(error => {
+      console.log('Google Sheet 저장 실패:', error);
+    });
     setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
   }
 
